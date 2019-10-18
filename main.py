@@ -1,5 +1,6 @@
 import chess
 import agent
+from time import time
 
 
 def get_state(board_str):
@@ -13,9 +14,24 @@ def get_state(board_str):
     return state
 
 
-board = chess.Board()
-print(board)
-ai = agent.Agent(64)
+def swap():
+    pass
 
-a = get_state(board.__str__())
-print(len(a))
+
+def main():
+    teacher = agent.Agent(64)
+    student = agent.Agent(64)
+    while True:
+        board = chess.Board()
+        end = False
+        while not end:
+            a = get_state(board.__str__())
+            if end:
+                end = True
+        if swap():
+            teacher, student = student, teacher
+            teacher.model.save(f'model/{time()}')
+
+
+if __name__ == '__main__':
+    main()

@@ -40,19 +40,12 @@ class Agent:
 
 		return model
 
-	def act(self, state, future):
+	def act(self, state):
 		if self.epsilon > self.epsilon_min:
 			self.epsilon *= self.epsilon_decay
 			if random.random() <= self.epsilon:
 				self.options = None
-				if future > .02:
-					return 0
-				elif future < -.02:
-					return 2
-				else:
-					return 1
-				# return random.randrange(self.action_size)
-
+				return random.randrange(self.action_size)
 		self.options = self.model.predict(state)
 		return np.argmax(self.options[0])
 
@@ -65,12 +58,12 @@ class Agent:
 		pick = np.random.choice(l, batch_size if batch_size < l else l)
 		for i in pick:
 			mini_batch.append(self.memory[i])
+
 		for state, action, reward, next_state in mini_batch:
 			target = reward + self.gamma * self.model.predict(next_state)[0][action]
-
 			target_f = self.model.predict(state)
 			target_f[0][action] = target
-
 			states.append(state[0][:])
 			target_fs.append(target_f[0][:])
+
 		self.model.fit([states], [target_fs], epochs=5, verbose=0, batch_size=100)
